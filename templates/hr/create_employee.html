@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Employee</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="card">
+    <h1>HR – Create Employee</h1>
+
+    <input id="candidate_id" placeholder="Candidate ID">
+    <input id="employee_code" placeholder="Employee Code">
+    <input id="department" placeholder="Department">
+    <input id="designation" placeholder="Designation">
+    <input id="pay_grade" placeholder="Pay Grade">
+    <input id="doj" placeholder="Date of Joining (YYYY-MM-DD)">
+
+    <button onclick="createEmployee()">Create Employee</button>
+
+    <p id="msg"></p>
+</div>
+
+<script src="/static/js/app.js"></script>
+<script>
+async function createEmployee() {
+    const data = {
+        candidate_id: parseInt(candidate_id.value),
+        employee_code: employee_code.value,
+        department: department.value,
+        designation: designation.value,
+        pay_grade: pay_grade.value,
+        date_of_joining: doj.value
+    };
+
+    const res = await postData("/hr/create-employee", data);
+    msg.innerText = res.message || res.error;
+    msg.className = res.error ? "error" : "success";
+}
+</script>
+
+</body>
+</html>

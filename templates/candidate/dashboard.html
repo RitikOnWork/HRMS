@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Candidate Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="card">
+    <h2>Candidate Profile</h2>
+    <p><b>Name:</b> {{ user.name }}</p>
+    <p><b>Email:</b> {{ user.email }}</p>
+
+    <a href="/auth/logout">Logout</a>
+</div>
+
+
+
+<div class="card" style="margin-top:20px;">
+    <h2>Job Feed</h2>
+
+    <!-- Filters -->
+    <input id="filterDepartment" placeholder="Filter by Department">
+    <input id="filterLocation" placeholder="Filter by Location">
+
+    <button onclick="loadJobs()">Search</button>
+
+    <!-- Job cards will be inserted here -->
+    <div id="jobs"></div>
+</div>
+
+<script src="/static/js/app.js"></script>
+
+<script>
+/*
+loadJobs()
+----------
+Fetches job list from backend and displays them
+*/
+async function loadJobs() {
+
+    // Read filter values
+    const dept = document.getElementById("filterDepartment").value;
+    const loc = document.getElementById("filterLocation").value;
+
+    // Build request URL with filters
+    let url = "/candidate/jobs?";
+    if (dept) url += `department=${dept}&`;
+    if (loc) url += `location=${loc}`;
+
+    // Fetch jobs from backend
+    const jobs = await fetch(url).then(res => res.json());
+
+    // Clear existing job cards
+    const container = document.getElementById("jobs");
+    container.innerHTML = "";
+
+    // Create UI card for each job
+    jobs.forEach(job => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.style.marginTop = "10px";
+
+        div.innerHTML = `
+            <b>${job.title}</b><br>
+            Department: ${job.department}<br>
+            Location: ${job.location}<br>
+            Vacancies: ${job.vacancies}<br>
+            <button onclick="applyJob(${job.id})">Apply</button>
+        `;
+
+        container.appendChild(div);
+    });
+}
+
+/*
+applyJob(jobId)
+---------------
+Called when candidate clicks "Apply"
+*/
+async function applyJob(jobId) {
+
+    const data = {
+        candidate_id: {{ user.user_id }},
+        job_id: jobId
+    };
+
+    // Send application request
+    const res = await postData("/candidate/apply", data);
+
+    alert(res.message || res.error);
+}
+
+// Automatically load jobs when page opens
+loadJobs();
+</script>
+
+
+
+</body>
+</html>

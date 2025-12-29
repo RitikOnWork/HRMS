@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Apply Job</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="card">
+    <h1>Apply for Job</h1>
+
+    <input id="candidate_id" placeholder="Candidate ID">
+    <input id="job_id" placeholder="Job ID">
+
+    <button onclick="applyJob()">Apply</button>
+
+    <p id="msg"></p>
+</div>
+
+<script src="/static/js/app.js"></script>
+<script>
+async function applyJob() {
+    const data = {
+        candidate_id: parseInt(candidate_id.value),
+        job_id: parseInt(job_id.value)
+    };
+
+    const res = await postData("/candidate/apply", data);
+    msg.innerText = res.message || res.error;
+    msg.className = res.error ? "error" : "success";
+}
+</script>
+
+</body>
+</html>
