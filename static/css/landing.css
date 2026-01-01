@@ -1,0 +1,199 @@
+/* ====================== RESET & BASE ====================== */
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Remove any default spacing in headings and paragraphs */
+h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+    padding: 0;
+}
+
+/* ====================== NAVBAR ====================== */
+#mainHeader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+    background: linear-gradient(140deg, #020b14 0%, #04101f 45%, #0A192F 100%);
+    backdrop-filter: blur(6px);
+    margin: 0;
+    padding: 0 20px;
+    transition: background 0.4s ease;
+}
+
+#mainHeader.scrolled {
+    background: rgba(0, 0, 0, 0.90);
+}
+
+/* Header Text Transition HRMS -> Full Title */
+#headerTitle {
+    position: relative;
+    overflow: hidden;
+    font-size: 2.2rem;
+    color: white;
+    font-weight: 600;
+}
+
+#headerTitle #short,
+#headerTitle #long {
+    display: inline-block;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+#headerTitle #long {
+    opacity: 0;
+    transform: translateY(20px);
+    white-space: nowrap;
+}
+
+#headerTitle.scrolled #short {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+#headerTitle.scrolled #long {
+    opacity: 1;
+    transform: translateY(0);
+    /* color: #ffffff; highlight color when expanded */
+    color: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+}
+
+/* ====================== HERO SECTION ====================== */
+:root {
+    --primary-bg: #04101F;
+    --accent-bg: #C7A462;
+    --soft-bg: #748089;
+    --text-light: #F4F1E8;
+    --text-accent: #E0B3FF;
+}
+
+#hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px;
+    background: linear-gradient(115deg,
+        rgba(4,16,31,1) 0%,
+        rgba(6,22,45,0.95) 50%,
+        rgba(10,25,47,0.85) 100%
+    );
+    color: var(--text-light);
+    position: relative;
+    overflow: hidden;
+}
+
+#hero::before {
+    content: "";
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    top: 30%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+    filter: blur(40px);
+}
+
+#heroTitle {
+    font-size: 4.2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--text-light);
+    letter-spacing: -1px;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+/* Accent span for impact */
+#heroTitle span {
+    background: linear-gradient(90deg, #ac42f3, #6f1564);
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: 900;
+}
+
+/* ====================== FEATURES SECTION ====================== */
+.features {
+    padding: 100px 0;
+    background: linear-gradient(135deg, #0b0b0b, #161616, #1c1c1c);
+    color: #e6e6e6;
+    display: flex;
+    justify-content: space-between;
+    /* align-items: center; */
+}
+
+.features h2 {
+    color: #ffffff;
+    font-weight: 700;
+    margin-bottom: 60px;
+    letter-spacing: 1px;
+}
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 40px 25px;
+    border-radius: 14px;
+    text-align: center;
+    color: #ddd;
+    box-shadow: 0 0 10px rgba(255,255,255,0.05);
+    backdrop-filter: blur(8px);
+    transition: all 0.4s ease;
+    height: 100%;
+    height: 420px;
+    width: 420px;
+    
+}
+
+.feature-card h5 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #ffffff;
+    margin: 50px;
+}
+
+.feature-card p {
+    padding: 30px;
+    font-size: 0.95rem;
+    opacity: 0.85;
+}
+
+/* Icon Styling */
+.feature-icon {
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.feature-icon img.feature-img {
+    width: 60px;      /* adjust size as needed */
+    height: 60px;
+    object-fit: contain;
+    border-radius: 10px; /* optional rounded corners */
+}
+
+
+/* Hover Interaction */
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 18px rgba(255, 207, 112, 0.3);
+    border-color: rgba(255, 207, 112, 0.6);
+    cursor: pointer;
+}
+
+/* ====================== FOOTER ====================== */
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #111;
+    color: white;
+}
