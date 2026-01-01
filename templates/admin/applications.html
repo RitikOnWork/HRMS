@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Applicants</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="card">
+    <h2>Applicants for Job #{{ job_id }}</h2>
+    <a href="/admin/dashboard">← Back to Dashboard</a>
+</div>
+
+{% for application, user in applications %}
+<div class="card" style="margin-top:10px;">
+    <p><b>Name:</b> {{ user.name }}</p>
+    <p><b>Email:</b> {{ user.email }}</p>
+    <p><b>Status:</b> {{ application.status }}</p>
+
+    {% if application.status == 'applied' %}
+    <form method="POST" action="/admin/select-candidate/{{ application.id }}">
+        <button>Shortlist Candidate</button>
+    </form>
+    {% endif %}
+</div>
+{% endfor %}
+
+</body>
+</html>

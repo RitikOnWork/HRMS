@@ -5,9 +5,54 @@ Routes for recruitment admins.
 """
 
 from flask import Blueprint, request, jsonify, render_template, session, redirect
-from models import db, Job, Application
+from models import db, Job, Application, User
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+
+
+@admin_bp.route('/job/<int:job_id>/applications')
+def view_applications(job_id):
+    """
+    Show all candidates who applied for a given job.
+    Only for admin.
+    """
+
+    # security check
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect('/auth/login')
+
+    # get applications for this job
+    applications = (
+        db.session.query(Application, User)
+        .join(User, Application.candidate_id == User.id)
+        .filter(Application.job_id == job_id)
+        .all()
+    )
+
+    return render_template(
+        'admin/applications.html',
+        applications=applications,
+        job_id=job_id
+    )
+
+
+@admin_bp.route('/select-candidate/<int:application_id>', methods=['POST'])
+def select_candidate_admin(application_id):
+    """
+    Marks an application as SELECTED.
+    """
+
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect('/auth/login')
+
+    application = Application.query.get(application_id)
+
+    if application:
+        application.status = 'shortlisted'
+        db.session.commit()
+
+    return redirect(request.referrer)
 
 
 
@@ -18,10 +63,13 @@ def admin_dashboard():
     """
     if 'user_id' not in session or session.get('role') != 'admin':
         return redirect('/auth/login')
+    
+    jobs = Job.query.all() 
 
     return render_template(
         'admin/dashboard.html',
-        user=session
+        user=session,
+        jobs=jobs
     )
 
 
@@ -59,6 +107,8 @@ def create_job():
     return jsonify({"message": "Job created"})
 
 
+'''
+
 @admin_bp.route('/select', methods=['POST'])
 def select_candidate():
     """
@@ -77,3 +127,5 @@ def select_candidate():
     db.session.commit()
 
     return jsonify({"message": "Candidate selected"})
+
+    '''

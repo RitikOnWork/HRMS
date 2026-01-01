@@ -28,6 +28,22 @@
     <!-- Clicking this publishes the job -->
     <button onclick="createJob()">Publish Job</button>
 
+
+    <h3>Published Jobs</h3>
+
+{% for job in jobs %}
+<div class="card">
+    <p><b>{{ job.title }}</b></p>
+    <p>Department: {{ job.department }}</p>
+
+    <a href="/admin/job/{{ job.id }}/applications">
+        View Applicants
+    </a>
+</div>
+{% endfor %}
+   
+
+
     <!-- Status message -->
     <p id="msg"></p>
 </div>

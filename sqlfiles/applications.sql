@@ -12,3 +12,5 @@ CREATE TABLE applications (
 DELETE FROM applications WHERE candidate_id=3;
 
 SELECT * FROM applications
+
+DELETE FROM applications WHERE job_id=1
