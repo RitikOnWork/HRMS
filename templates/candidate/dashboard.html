@@ -1,101 +1,88 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Candidate Dashboard</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Candidate Dashboard | HRMS</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
 </head>
 <body>
 
-<div class="card">
-    <h2>Candidate Profile</h2>
-    <p><b>Name:</b> {{ user.name }}</p>
-    <p><b>Email:</b> {{ user.email }}</p>
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="logo">HRMS</div>
+    <a href="/auth/logout" class="btn-outline">Logout</a>
+</nav>
 
-    <a href="/auth/logout">Logout</a>
-</div>
+<!-- Page Wrapper -->
+<div class="page">
 
+    <!-- Profile Card -->
+    <div class="glass-card">
+        <h2>Candidate Profile</h2>
+        <div class="profile-info">
+            <p><span>Name</span>{{ user.name }}</p>
+            <p><span>Email</span>{{ user.email }}</p>
+        </div>
+    </div>
 
+    <!-- Job Feed -->
+    <div class="glass-card">
+        <h2>Job Openings</h2>
 
-<div class="card" style="margin-top:20px;">
-    <h2>Job Feed</h2>
+        <!-- Filters -->
+        <div class="filters">
+            <input id="filterDepartment" placeholder="Department">
+            <input id="filterLocation" placeholder="Location">
+            <button class="btn-primary" onclick="loadJobs()">Search</button>
+        </div>
 
-    <!-- Filters -->
-    <input id="filterDepartment" placeholder="Filter by Department">
-    <input id="filterLocation" placeholder="Filter by Location">
+        <!-- Jobs -->
+        <div id="jobs" class="job-list"></div>
+    </div>
 
-    <button onclick="loadJobs()">Search</button>
-
-    <!-- Job cards will be inserted here -->
-    <div id="jobs"></div>
 </div>
 
 <script src="/static/js/app.js"></script>
 
 <script>
-/*
-loadJobs()
-----------
-Fetches job list from backend and displays them
-*/
 async function loadJobs() {
-
-    // Read filter values
     const dept = document.getElementById("filterDepartment").value;
     const loc = document.getElementById("filterLocation").value;
 
-    // Build request URL with filters
     let url = "/candidate/jobs?";
     if (dept) url += `department=${dept}&`;
     if (loc) url += `location=${loc}`;
 
-    // Fetch jobs from backend
     const jobs = await fetch(url).then(res => res.json());
-
-    // Clear existing job cards
     const container = document.getElementById("jobs");
     container.innerHTML = "";
 
-    // Create UI card for each job
     jobs.forEach(job => {
         const div = document.createElement("div");
-        div.className = "card";
-        div.style.marginTop = "10px";
+        div.className = "job-card";
 
         div.innerHTML = `
-            <b>${job.title}</b><br>
-            Department: ${job.department}<br>
-            Location: ${job.location}<br>
-            Vacancies: ${job.vacancies}<br>
-            <button onclick="applyJob(${job.id})">Apply</button>
+            <h3>${job.title}</h3>
+            <p><b>Department:</b> ${job.department}</p>
+            <p><b>Location:</b> ${job.location}</p>
+            <p><b>Vacancies:</b> ${job.vacancies}</p>
+            <button class="btn-apply" onclick="applyJob(${job.id})">Apply</button>
         `;
 
         container.appendChild(div);
     });
 }
 
-/*
-applyJob(jobId)
----------------
-Called when candidate clicks "Apply"
-*/
 async function applyJob(jobId) {
-
     const data = {
         candidate_id: {{ user.user_id }},
         job_id: jobId
     };
-
-    // Send application request
     const res = await postData("/candidate/apply", data);
-
     alert(res.message || res.error);
 }
 
-// Automatically load jobs when page opens
 loadJobs();
 </script>
-
-
 
 </body>
 </html>
