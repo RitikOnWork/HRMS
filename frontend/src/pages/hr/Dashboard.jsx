@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './style.css';
+import { getCurrentUser } from '../../services/auth';
 
 const HRDashboard = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -11,12 +12,20 @@ const HRDashboard = () => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Mock Data
-  const currentUser = {
-    name: 'Sarah Mitchell',
-    role: 'HR Manager',
-    avatar: null
-  };
+  // Current logged-in user
+  const [currentUser, setCurrentUser] = useState({ name: '', role: '' });
+
+  useEffect(() => {
+    getCurrentUser()
+      .then(res => {
+        if (res && res.user) {
+          setCurrentUser(res.user);
+        }
+      })
+      .catch(err => {
+        console.warn('Failed to fetch current user', err);
+      });
+  }, []);
 
   const [employees, setEmployees] = useState([
     { id: 'EMP001', name: 'John Anderson', department: 'Public Works', status: 'Active', position: 'Engineer', email: 'j.anderson@municipal.gov', phone: '555-0101' },
@@ -58,6 +67,7 @@ const HRDashboard = () => {
   };
 
   const getInitials = (name) => {
+    if (!name) return '';
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
