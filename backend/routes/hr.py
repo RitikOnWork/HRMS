@@ -5,7 +5,7 @@ API routes for HR admins.
 """
 
 from flask import Blueprint, request, jsonify, session
-from models import db, Employee, CandidateProfile, Transfer
+from models import db, Employee, CandidateProfile, Transfer, User
 
 hr_bp = Blueprint(
     'hr',
@@ -34,6 +34,25 @@ def hr_dashboard():
             "name": session.get('name'),
             "email": session.get('email'),
             "role": session.get('role')
+        }
+    }), 200
+
+
+@hr_bp.route('/user', methods=['GET'])
+def get_hr_user():
+    """
+    GET /api/hr/user
+    Returns a user with role = 'hr' (first match).
+    """
+    user = User.query.filter_by(role='hr').first()
+    if not user:
+        return jsonify({"error": "No HR user found"}), 404
+    return jsonify({
+        "user": {
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "role": user.role
         }
     }), 200
 

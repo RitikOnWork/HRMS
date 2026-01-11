@@ -3,7 +3,7 @@
 // --- USER DATA ---
 
 export const currentUser = {
-  name: 'Sarah Mitchell',
+  name: '',
   role: 'HR Manager',
   avatar: null
 };
@@ -57,7 +57,7 @@ export const attendanceEmployees = [
   { id: 'EMP005', name: 'Michael Wilson', department: 'Parks & Recreation', shift: 'Morning', status: 'late', checkIn: '09:30 AM', totalLeaves: 10, lateArrivals: 8, earlyLeaves: 4 },
   { id: 'EMP006', name: 'Lisa Martinez', department: 'Finance', shift: 'Morning', status: 'absent', checkIn: '-', totalLeaves: 15, lateArrivals: 6, earlyLeaves: 5 },
   { id: 'EMP007', name: 'Robert Taylor', department: 'Education', shift: 'Afternoon', status: 'present', checkIn: '01:00 PM', totalLeaves: 5, lateArrivals: 1, earlyLeaves: 1 },
-  { id: 'EMP008', name: 'Sarah Johnson', department: 'Public Works', shift: 'Morning', status: 'present', checkIn: '08:30 AM', totalLeaves: 2, lateArrivals: 0, earlyLeaves: 0 },
+  { id: 'EMP008', name: 'HR Representative', department: 'Public Works', shift: 'Morning', status: 'present', checkIn: '08:30 AM', totalLeaves: 2, lateArrivals: 0, earlyLeaves: 0 },
   { id: 'EMP009', name: 'James Lee', department: 'Health Services', shift: 'Night', status: 'present', checkIn: '10:00 PM', totalLeaves: 6, lateArrivals: 3, earlyLeaves: 2 },
   { id: 'EMP010', name: 'Jennifer White', department: 'Administration', shift: 'Morning', status: 'present', checkIn: '08:50 AM', totalLeaves: 7, lateArrivals: 2, earlyLeaves: 1 },
 ];
@@ -192,3 +192,4 @@ export const getRadarCoordinates = (values, maxVal = 100, center = 100, radius =
   }).join(' ');
   return points;
 };
+

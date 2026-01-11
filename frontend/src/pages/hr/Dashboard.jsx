@@ -9,7 +9,8 @@ import DepartmentsView from './views/DepartmentsView';
 import AttendanceView from './views/AttendanceView';
 import LeaveView from './views/LeaveView';
 import AttendanceDetailModal from './views/AttendanceDetailModal';
-import { getCurrentUser } from '../../services/auth';
+import { getCurrentUser, getHRUser } from '../../services/auth';
+
 const HRDashboard = () => {
   // ============================================
   // UI STATE MANAGEMENT
@@ -29,6 +30,33 @@ const HRDashboard = () => {
   // ============================================
   const [employees, setEmployees] = useState(Data.initialEmployees);
   const [leaveRequests, setLeaveRequests] = useState(Data.initialLeaveRequests);
+
+  // Current logged-in user (fetched from backend)
+  const [currentUser, setCurrentUser] = useState(Data.currentUser);
+  // HR user (fetched from users table where role = 'hr')
+  const [hrUser, setHrUser] = useState(null);
+
+  useEffect(() => {
+    getCurrentUser()
+      .then(res => {
+        if (res && res.user) setCurrentUser(res.user);
+      })
+      .catch(err => {
+        console.error('Failed to fetch current user', err);
+      });
+
+    // Fetch the HR user and update UI (replace any sample 'Sarah Johnson' employee name)
+    getHRUser()
+      .then(res => {
+        if (res && res.user) {
+          setHrUser(res.user);
+          setEmployees(prev => prev.map(emp => emp.name === 'Sarah Johnson' ? { ...emp, name: res.user.name } : emp));
+        }
+      })
+      .catch(err => {
+        console.error('Failed to fetch hr user', err);
+      });
+  }, []);
 
   // ============================================
   // ATTENDANCE MODAL STATE
@@ -120,10 +148,10 @@ const HRDashboard = () => {
         </nav>
 
         <div className="sidebar-profile">
-          <div className="profile-avatar">{Data.getInitials(Data.currentUser.name)}</div>
+          <div className="profile-avatar">{Data.getInitials(hrUser?.name || currentUser?.name || Data.currentUser.name)}</div>
           <div className="profile-info">
-            <div className="profile-name">{Data.currentUser.name}</div>
-            <div className="profile-role">{Data.currentUser.role}</div>
+            <div className="profile-name">{hrUser?.name || currentUser?.name || Data.currentUser.name}</div>
+            <div className="profile-role">{hrUser?.role || currentUser?.role || Data.currentUser.role}</div>
           </div>
         </div>
       </aside>
@@ -170,15 +198,15 @@ const HRDashboard = () => {
             {/* Profile Menu */}
             <div className="profile-menu">
               <button className="profile-btn" onClick={() => setShowProfileDropdown(!showProfileDropdown)}>
-                <div className="profile-avatar small">{Data.getInitials(Data.currentUser.name)}</div>
+                <div className="profile-avatar small">{Data.getInitials(hrUser?.name || currentUser?.name || Data.currentUser.name)}</div>
               </button>
 
               {showProfileDropdown && (
                 <div className="dropdown-menu">
                   <div className="dropdown-header">
                     <div className="dropdown-user-info">
-                      <strong>{Data.currentUser.name}</strong>
-                      <span>{Data.currentUser.role}</span>
+                      <strong>{hrUser?.name || currentUser?.name || Data.currentUser.name}</strong>
+                      <span>{hrUser?.role || currentUser?.role || Data.currentUser.role}</span>
                     </div>
                   </div>
                   <button className="dropdown-item">View Profile</button>
@@ -212,6 +240,8 @@ const HRDashboard = () => {
               handleViewEmployee={handleViewEmployee}
               handleLeaveAction={handleLeaveAction}
               setActiveSection={setActiveSection}
+              currentUser={currentUser}
+              hrUser={hrUser}
             />
           )}
 
@@ -302,19 +332,53 @@ const HRDashboard = () => {
         </>
       )}
 
-      {/* Employee Detail Modal */}
+      {/* Employee Detail Modal - UPDATED */}
       {showEmployeeDetail && selectedEmployee && (
         <>
           <div className="modal-overlay" onClick={() => setShowEmployeeDetail(false)}></div>
           <div className="modal">
             <div className="modal-header">
-              <h3>{selectedEmployee.name}</h3>
-              <button className="close-btn" onClick={() => setShowEmployeeDetail(false)}>
-                {icons.x}
-              </button>
+              <h3>Employee Details</h3>
+              <button className="close-btn" onClick={() => setShowEmployeeDetail(false)}>{icons.x}</button>
             </div>
             <div className="modal-body">
-              <p>Employee details will be shown here...</p>
+              <div className="employee-detail">
+                <div className="employee-avatar large">{Data.getInitials(selectedEmployee.name)}</div>
+                <h4>{selectedEmployee.name}</h4>
+                <span className={`status-badge ${selectedEmployee.status?.toLowerCase().replace(' ', '-') || 'active'}`}>
+                  {selectedEmployee.status}
+                </span>
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <label>Employee ID</label>
+                    <div>{selectedEmployee.id}</div>
+                  </div>
+                  <div className="detail-item">
+                    <label>Department</label>
+                    <div>{selectedEmployee.department}</div>
+                  </div>
+                  <div className="detail-item">
+                    <label>Role</label>
+                    <div>{selectedEmployee.role || 'Employee'}</div>
+                  </div>
+                  <div className="detail-item">
+                    <label>Email</label>
+                    <div>{selectedEmployee.email || `${selectedEmployee.name.toLowerCase().replace(' ', '.')}@municipal.gov`}</div>
+                  </div>
+                  <div className="detail-item">
+                    <label>Phone</label>
+                    <div>{selectedEmployee.phone || '+1 (555) 123-4567'}</div>
+                  </div>
+                  <div className="detail-item">
+                    <label>Joined Date</label>
+                    <div>{selectedEmployee.joinedDate || 'Jan 15, 2024'}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="secondary-btn" onClick={() => setShowEmployeeDetail(false)}>Close</button>
+              <button className="primary-btn">Edit Employee</button>
             </div>
           </div>
         </>
@@ -324,6 +388,7 @@ const HRDashboard = () => {
       {showAttendanceDetail && selectedAttendanceEmployee && (
         <AttendanceDetailModal
           employee={selectedAttendanceEmployee}
+          isOpen={showAttendanceDetail}
           onClose={() => setShowAttendanceDetail(false)}
         />
       )}

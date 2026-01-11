@@ -18,3 +18,9 @@ export const getCurrentUser = () => {
     method: "GET",
   });
 };
+
+export const getHRUser = () => {
+  return apiFetch('/api/hr/user', {
+    method: 'GET'
+  });
+};
